@@ -6,6 +6,9 @@
 #include "../../renderer/base/Renderer.hpp"
 #include "../../renderer/dx/DxRenderer.hpp"
 #include "../../cascadia/TerminalCore/Terminal.hpp"
+#include <UIAutomationCore.h>
+#include "../../types/IControlInfo.h"
+#include "../../types/TermControlUiaProvider.hpp"
 
 using namespace Microsoft::Console::VirtualTerminal;
 
@@ -39,7 +42,7 @@ __declspec(dllexport) void _stdcall TerminalBlinkCursor(void* terminal);
 __declspec(dllexport) void _stdcall TerminalSetCursorVisible(void* terminal, const bool visible);
 };
 
-struct HwndTerminal
+struct HwndTerminal : ::Microsoft::Console::Types::IControlInfo
 {
 public:
     HwndTerminal(HWND hwnd);
@@ -48,11 +51,18 @@ public:
     HRESULT Refresh(const SIZE windowSize, _Out_ COORD* dimensions);
     void RegisterScrollCallback(std::function<void(int, int, int)> callback);
     void RegisterWriteCallback(const void _stdcall callback(wchar_t*));
+    ::Microsoft::Console::Types::IUiaData* GetUiaData() const;
+    HWND GetHwnd() const;
+
+    static LRESULT CALLBACK HwndTerminalWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
     wil::unique_hwnd _hwnd;
     FontInfoDesired _desiredFont;
     FontInfo _actualFont;
+    int _currentDpi;
+    
+    ::Microsoft::WRL::ComPtr<::Microsoft::Terminal::TermControlUiaProvider> _uiaProvider;
 
     std::unique_ptr<::Microsoft::Terminal::Core::Terminal> _terminal;
 
@@ -74,4 +84,13 @@ private:
     friend void _stdcall TerminalBlinkCursor(void* terminal);
     friend void _stdcall TerminalSetCursorVisible(void* terminal, const bool visible);
     void _UpdateFont(int newDpi);
+    IRawElementProviderSimple* _GetUiaProvider();
+
+    // Inherited via IControlInfo
+    virtual COORD GetFontSize() override;
+    virtual RECT GetBounds() override;
+    virtual double GetScaleFactor() override;
+    virtual void ChangeViewport(const SMALL_RECT NewWindow) override;
+    virtual HRESULT GetHostUiaProvider(IRawElementProviderSimple** provider) override;
+    virtual RECT GetPadding() override;
 };

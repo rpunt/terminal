@@ -29,12 +29,14 @@ Author(s):
 #include <winrt/Microsoft.Terminal.TerminalControl.h>
 #include "TermControlUiaProvider.hpp"
 #include "../types/IUiaEventDispatcher.h"
+#include "../types/IControlInfo.h"
 
 namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 {
     struct TermControlAutomationPeer :
         public TermControlAutomationPeerT<TermControlAutomationPeer>,
-        ::Microsoft::Console::Types::IUiaEventDispatcher
+        ::Microsoft::Console::Types::IUiaEventDispatcher,
+        ::Microsoft::Console::Types::IControlInfo
     {
     public:
         TermControlAutomationPeer(winrt::Microsoft::Terminal::TerminalControl::implementation::TermControl* owner);
@@ -59,11 +61,21 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         Windows::UI::Xaml::Automation::Provider::ITextRangeProvider DocumentRange();
 #pragma endregion
 
+#pragma region IControlInfo Pattern
+    // Inherited via IControlInfo
+    virtual COORD GetFontSize() override;
+    virtual RECT GetBounds() override;
+    virtual RECT GetPadding() override;
+    virtual double GetScaleFactor() override;
+    virtual void ChangeViewport(SMALL_RECT NewWindow) override;
+    virtual HRESULT GetHostUiaProvider(IRawElementProviderSimple** provider) override;
+#pragma endregion
+
         RECT GetBoundingRectWrapped();
 
     private:
         ::Microsoft::WRL::ComPtr<::Microsoft::Terminal::TermControlUiaProvider> _uiaProvider;
-
+        winrt::Microsoft::Terminal::TerminalControl::implementation::TermControl* _termControl;
         winrt::com_array<Windows::UI::Xaml::Automation::Provider::ITextRangeProvider> WrapArrayOfTextRangeProviders(SAFEARRAY* textRanges);
     };
 }

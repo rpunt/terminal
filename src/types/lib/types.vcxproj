@@ -23,6 +23,8 @@
     <ClCompile Include="..\ScreenInfoUiaProviderBase.cpp" />
     <ClCompile Include="..\ThemeUtils.cpp" />
     <ClCompile Include="..\UiaTextRangeBase.cpp" />
+    <ClCompile Include="..\TermControlUiaTextRange.cpp" />
+    <ClCompile Include="..\TermControlUiaProvider.cpp" />
     <ClCompile Include="..\Utf16Parser.cpp" />
     <ClCompile Include="..\Viewport.cpp" />
     <ClCompile Include="..\WindowBufferSizeEvent.cpp" />
@@ -47,6 +49,8 @@
     <ClInclude Include="..\IUiaData.h" />
     <ClInclude Include="..\IUiaEventDispatcher.h" />
     <ClInclude Include="..\IUiaWindow.h" />
+    <ClCompile Include="..\TermControlUiaTextRange.hpp" />
+    <ClCompile Include="..\TermControlUiaProvider.hpp" />
     <ClInclude Include="..\precomp.h" />
     <ClInclude Include="..\ScreenInfoUiaProviderBase.h" />
     <ClInclude Include="..\UiaTextRangeBase.hpp" />

@@ -3,7 +3,7 @@ Copyright (c) Microsoft Corporation
 Licensed under the MIT license.
 
 Module Name:
-- UiaTextRange.hpp
+- TermControlUiaTextRange.hpp
 
 Abstract:
 - This module provides UI Automation access to the text of the console
@@ -20,15 +20,15 @@ Author(s):
 
 namespace Microsoft::Terminal
 {
-    class UiaTextRange final : public Microsoft::Console::Types::UiaTextRangeBase
+    class TermControlUiaTextRange final : public Microsoft::Console::Types::UiaTextRangeBase
     {
     public:
         static HRESULT GetSelectionRanges(_In_ Microsoft::Console::Types::IUiaData* pData,
                                           _In_ IRawElementProviderSimple* pProvider,
                                           _In_ const std::wstring_view wordDelimiters,
-                                          _Out_ std::deque<WRL::ComPtr<UiaTextRange>>& ranges);
+                                          _Out_ std::deque<WRL::ComPtr<TermControlUiaTextRange>>& ranges);
 
-        UiaTextRange() = default;
+        TermControlUiaTextRange() = default;
 
         // degenerate range
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
@@ -54,7 +54,7 @@ namespace Microsoft::Terminal
                                        const UiaPoint point,
                                        const std::wstring_view wordDelimiters = DefaultWordDelimiter);
 
-        HRESULT RuntimeClassInitialize(const UiaTextRange& a);
+        HRESULT RuntimeClassInitialize(const TermControlUiaTextRange& a);
 
         IFACEMETHODIMP Clone(_Outptr_result_maybenull_ ITextRangeProvider** ppRetVal) override;
 

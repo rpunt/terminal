@@ -11,6 +11,7 @@
 
 using namespace Microsoft::Console::Types;
 using namespace winrt::Windows::UI::Xaml::Automation::Peers;
+using namespace winrt::Windows::Graphics::Display;
 
 namespace UIA
 {
@@ -28,9 +29,10 @@ namespace XamlAutomation
 namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 {
     TermControlAutomationPeer::TermControlAutomationPeer(winrt::Microsoft::Terminal::TerminalControl::implementation::TermControl* owner) :
-        TermControlAutomationPeerT<TermControlAutomationPeer>(*owner) // pass owner to FrameworkElementAutomationPeer
+        TermControlAutomationPeerT<TermControlAutomationPeer>(*owner), // pass owner to FrameworkElementAutomationPeer
+        _termControl{ owner }
     {
-        THROW_IF_FAILED(::Microsoft::WRL::MakeAndInitialize<::Microsoft::Terminal::TermControlUiaProvider>(&_uiaProvider, owner, std::bind(&TermControlAutomationPeer::GetBoundingRectWrapped, this)));
+        THROW_IF_FAILED(::Microsoft::WRL::MakeAndInitialize<::Microsoft::Terminal::TermControlUiaProvider>(&_uiaProvider, _termControl->GetUiaData(), this));
     };
 
     // Method Description:
@@ -159,7 +161,13 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 
 #pragma endregion
 
-    RECT TermControlAutomationPeer::GetBoundingRectWrapped()
+#pragma region IControlInfo
+    COORD TermControlAutomationPeer::GetFontSize()
+    {
+        return _termControl->GetActualFont().GetSize();
+    }
+
+    RECT TermControlAutomationPeer::GetBounds()
     {
         auto rect = GetBoundingRectangle();
         return {
@@ -169,6 +177,33 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
             gsl::narrow<LONG>(rect.Y + rect.Height)
         };
     }
+
+    HRESULT TermControlAutomationPeer::GetHostUiaProvider(IRawElementProviderSimple** provider)
+    {
+        return S_OK;
+    }
+
+    RECT TermControlAutomationPeer::GetPadding()
+    {
+        auto padding = _termControl->GetPadding();
+        return {
+            gsl::narrow<LONG>(padding.Left),
+            gsl::narrow<LONG>(padding.Top),
+            gsl::narrow<LONG>(padding.Right),
+            gsl::narrow<LONG>(padding.Bottom)
+        }
+    }
+
+    double TermControlAutomationPeer::GetScaleFactor()
+    {
+        DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel();
+    }
+
+    void ChangeViewport(const SMALL_RECT NewWindow)
+    {
+        _termControl->ScrollViewport(NewWindow.Top);
+    }
+#pragma endregion
 
     // Method Description:
     // - extracts the UiaTextRanges from the SAFEARRAY and converts them to Xaml ITextRangeProviders

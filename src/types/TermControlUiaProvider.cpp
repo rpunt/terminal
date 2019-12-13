@@ -1,22 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-#include "pch.h"
+#include "precomp.h"
 #include "TermControlUiaProvider.hpp"
-#include "TermControl.h"
 
 using namespace Microsoft::Terminal;
 using namespace Microsoft::Console::Types;
 using namespace Microsoft::WRL;
 
-HRESULT TermControlUiaProvider::RuntimeClassInitialize(_In_ winrt::Microsoft::Terminal::TerminalControl::implementation::TermControl* termControl,
-                                                       _In_ std::function<RECT(void)> GetBoundingRect)
+HRESULT TermControlUiaProvider::RuntimeClassInitialize(_In_ ::Microsoft::Console::Types::IUiaData* const uiaData,
+                                                       _In_ ::Microsoft::Console::Types::IControlInfo* controlInfo)
 {
-    RETURN_HR_IF_NULL(E_INVALIDARG, termControl);
-    RETURN_IF_FAILED(ScreenInfoUiaProviderBase::RuntimeClassInitialize(termControl->GetUiaData()));
+    RETURN_HR_IF_NULL(E_INVALIDARG, uiaData);
+    RETURN_IF_FAILED(ScreenInfoUiaProviderBase::RuntimeClassInitialize(uiaData));
 
-    _getBoundingRect = GetBoundingRect;
-    _termControl = termControl;
+    _controlInfo = controlInfo;
 
     // TODO GitHub #1914: Re-attach Tracing to UIA Tree
     //Tracing::s_TraceUia(nullptr, ApiCall::Constructor, nullptr);
@@ -56,7 +54,7 @@ IFACEMETHODIMP TermControlUiaProvider::get_BoundingRectangle(_Out_ UiaRect* pRec
     // TODO GitHub #1914: Re-attach Tracing to UIA Tree
     //Tracing::s_TraceUia(this, ApiCall::GetBoundingRectangle, nullptr);
 
-    RECT rc = _getBoundingRect();
+    RECT rc = _controlInfo->GetBounds();
 
     pRect->left = rc.left;
     pRect->top = rc.top;
@@ -64,6 +62,11 @@ IFACEMETHODIMP TermControlUiaProvider::get_BoundingRectangle(_Out_ UiaRect* pRec
     pRect->height = rc.bottom - rc.top;
 
     return S_OK;
+}
+
+IFACEMETHODIMP TermControlUiaProvider::get_HostRawElementProvider(_COM_Outptr_result_maybenull_ IRawElementProviderSimple** ppProvider) noexcept
+{
+    return _controlInfo->GetHostUiaProvider(ppProvider);
 }
 
 IFACEMETHODIMP TermControlUiaProvider::get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider)
@@ -87,17 +90,22 @@ IFACEMETHODIMP TermControlUiaProvider::get_FragmentRoot(_COM_Outptr_result_maybe
 
 const COORD TermControlUiaProvider::GetFontSize() const
 {
-    return _termControl->GetActualFont().GetSize();
+    return _controlInfo->GetFontSize();
 }
 
-const winrt::Windows::UI::Xaml::Thickness TermControlUiaProvider::GetPadding() const
+const RECT TermControlUiaProvider::GetPadding() const
 {
-    return _termControl->GetPadding();
+    return _controlInfo->GetPadding();
+}
+
+const double TermControlUiaProvider::GetScaleFactor() const
+{
+    return _controlInfo->GetScaleFactor();
 }
 
 void TermControlUiaProvider::ChangeViewport(const SMALL_RECT NewWindow)
 {
-    _termControl->ScrollViewport(NewWindow.Top);
+    _controlInfo->ChangeViewport(NewWindow);
 }
 
 HRESULT TermControlUiaProvider::GetSelectionRanges(_In_ IRawElementProviderSimple* pProvider, const std::wstring_view wordDelimiters, _Out_ std::deque<ComPtr<UiaTextRangeBase>>& result)
@@ -107,8 +115,8 @@ HRESULT TermControlUiaProvider::GetSelectionRanges(_In_ IRawElementProviderSimpl
         result.clear();
         typename std::remove_reference<decltype(result)>::type temporaryResult;
 
-        std::deque<ComPtr<UiaTextRange>> ranges;
-        RETURN_IF_FAILED(UiaTextRange::GetSelectionRanges(_pData, pProvider, wordDelimiters, ranges));
+        std::deque<ComPtr<TermControlUiaTextRange>> ranges;
+        RETURN_IF_FAILED(TermControlUiaTextRange::GetSelectionRanges(_pData, pProvider, wordDelimiters, ranges));
 
         while (!ranges.empty())
         {
@@ -126,8 +134,8 @@ HRESULT TermControlUiaProvider::CreateTextRange(_In_ IRawElementProviderSimple* 
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, ppUtr);
     *ppUtr = nullptr;
-    UiaTextRange* result = nullptr;
-    RETURN_IF_FAILED(MakeAndInitialize<UiaTextRange>(&result, _pData, pProvider, wordDelimiters));
+    TermControlUiaTextRange* result = nullptr;
+    RETURN_IF_FAILED(MakeAndInitialize<TermControlUiaTextRange>(&result, _pData, pProvider, wordDelimiters));
     *ppUtr = result;
     return S_OK;
 }
@@ -139,8 +147,8 @@ HRESULT TermControlUiaProvider::CreateTextRange(_In_ IRawElementProviderSimple* 
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, ppUtr);
     *ppUtr = nullptr;
-    UiaTextRange* result = nullptr;
-    RETURN_IF_FAILED(MakeAndInitialize<UiaTextRange>(&result, _pData, pProvider, cursor, wordDelimiters));
+    TermControlUiaTextRange* result = nullptr;
+    RETURN_IF_FAILED(MakeAndInitialize<TermControlUiaTextRange>(&result, _pData, pProvider, cursor, wordDelimiters));
     *ppUtr = result;
     return S_OK;
 }
@@ -153,8 +161,8 @@ HRESULT TermControlUiaProvider::CreateTextRange(_In_ IRawElementProviderSimple* 
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, ppUtr);
     *ppUtr = nullptr;
-    UiaTextRange* result = nullptr;
-    RETURN_IF_FAILED(MakeAndInitialize<UiaTextRange>(&result, _pData, pProvider, start, end, wordDelimiters));
+    TermControlUiaTextRange* result = nullptr;
+    RETURN_IF_FAILED(MakeAndInitialize<TermControlUiaTextRange>(&result, _pData, pProvider, start, end, wordDelimiters));
     *ppUtr = result;
     return S_OK;
 }
@@ -166,8 +174,8 @@ HRESULT TermControlUiaProvider::CreateTextRange(_In_ IRawElementProviderSimple* 
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, ppUtr);
     *ppUtr = nullptr;
-    UiaTextRange* result = nullptr;
-    RETURN_IF_FAILED(MakeAndInitialize<UiaTextRange>(&result, _pData, pProvider, point, wordDelimiters));
+    TermControlUiaTextRange* result = nullptr;
+    RETURN_IF_FAILED(MakeAndInitialize<TermControlUiaTextRange>(&result, _pData, pProvider, point, wordDelimiters));
     *ppUtr = result;
     return S_OK;
 }
