@@ -514,9 +514,9 @@ double HwndTerminal::GetScaleFactor()
     return static_cast<double>(_currentDpi) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
 
-void HwndTerminal::ChangeViewport(const SMALL_RECT NewWindow){
-
-};
+void HwndTerminal::ChangeViewport(const SMALL_RECT /* NewWindow */)
+{
+}
 
 HRESULT HwndTerminal::GetHostUiaProvider(IRawElementProviderSimple** provider)
 {
