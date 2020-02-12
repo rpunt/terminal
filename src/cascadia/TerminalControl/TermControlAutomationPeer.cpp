@@ -186,11 +186,12 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
     RECT TermControlAutomationPeer::GetPadding()
     {
         auto padding = _termControl->GetPadding();
-        return {
+        return
+        {
             gsl::narrow<LONG>(padding.Left),
-            gsl::narrow<LONG>(padding.Top),
-            gsl::narrow<LONG>(padding.Right),
-            gsl::narrow<LONG>(padding.Bottom)
+                gsl::narrow<LONG>(padding.Top),
+                gsl::narrow<LONG>(padding.Right),
+                gsl::narrow<LONG>(padding.Bottom)
         }
     }
 

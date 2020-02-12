@@ -238,10 +238,10 @@ HRESULT _stdcall CreateTerminal(HWND parentHwnd, _Out_ void** hwnd, _Out_ void**
         0,
         L"static",
         nullptr,
-                    WS_CHILD |
-                WS_CLIPCHILDREN |
-                WS_CLIPSIBLINGS |
-                WS_VISIBLE,
+        WS_CHILD |
+            WS_CLIPCHILDREN |
+            WS_CLIPSIBLINGS |
+            WS_VISIBLE,
         0,
         0,
         0,
@@ -249,8 +249,7 @@ HRESULT _stdcall CreateTerminal(HWND parentHwnd, _Out_ void** hwnd, _Out_ void**
         parentHwnd,
         (HMENU)0x02,
         nullptr,
-        0
-    );
+        0);
     auto _terminal = std::make_unique<HwndTerminal>(_hostWindow);
     RETURN_IF_FAILED(_terminal->Initialize());
 
@@ -281,7 +280,7 @@ void _stdcall TerminalSendOutput(void* terminal, LPCWSTR data)
 HRESULT _stdcall TerminalTriggerResize(void* terminal, double width, double height, _Out_ COORD* dimensions)
 {
     const auto publicTerminal = static_cast<HwndTerminal*>(terminal);
-    
+
     SetWindowPos(
         publicTerminal->GetHwnd(),
         nullptr,
@@ -289,8 +288,7 @@ HRESULT _stdcall TerminalTriggerResize(void* terminal, double width, double heig
         0,
         static_cast<int>(width),
         static_cast<int>(height),
-        0
-    );
+        0);
 
     const SIZE windowSize{ static_cast<short>(width), static_cast<short>(height) };
     return publicTerminal->Refresh(windowSize, dimensions);
@@ -504,7 +502,10 @@ RECT HwndTerminal::GetBounds()
 RECT HwndTerminal::GetPadding()
 {
     return {
-        0, 0, 0, 0,
+        0,
+        0,
+        0,
+        0,
     };
 }
 
@@ -513,8 +514,7 @@ double HwndTerminal::GetScaleFactor()
     return static_cast<double>(_currentDpi) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
 
-void HwndTerminal::ChangeViewport(const SMALL_RECT NewWindow) 
-{
+void HwndTerminal::ChangeViewport(const SMALL_RECT NewWindow){
 
 };
 

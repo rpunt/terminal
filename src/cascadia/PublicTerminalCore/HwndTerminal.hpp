@@ -61,7 +61,7 @@ private:
     FontInfoDesired _desiredFont;
     FontInfo _actualFont;
     int _currentDpi;
-    
+
     ::Microsoft::WRL::ComPtr<::Microsoft::Terminal::TermControlUiaProvider> _uiaProvider;
 
     std::unique_ptr<::Microsoft::Terminal::Core::Terminal> _terminal;

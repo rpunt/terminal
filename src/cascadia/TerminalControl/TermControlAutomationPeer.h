@@ -27,7 +27,7 @@ Author(s):
 #include "TermControl.h"
 #include "TermControlAutomationPeer.g.h"
 #include <winrt/Microsoft.Terminal.TerminalControl.h>
-#include "TermControlUiaProvider.hpp"
+#include "../types/TermControlUiaProvider.hpp"
 #include "../types/IUiaEventDispatcher.h"
 #include "../types/IControlInfo.h"
 
@@ -62,13 +62,13 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 #pragma endregion
 
 #pragma region IControlInfo Pattern
-    // Inherited via IControlInfo
-    virtual COORD GetFontSize() override;
-    virtual RECT GetBounds() override;
-    virtual RECT GetPadding() override;
-    virtual double GetScaleFactor() override;
-    virtual void ChangeViewport(SMALL_RECT NewWindow) override;
-    virtual HRESULT GetHostUiaProvider(IRawElementProviderSimple** provider) override;
+        // Inherited via IControlInfo
+        virtual COORD GetFontSize() override;
+        virtual RECT GetBounds() override;
+        virtual RECT GetPadding() override;
+        virtual double GetScaleFactor() override;
+        virtual void ChangeViewport(SMALL_RECT NewWindow) override;
+        virtual HRESULT GetHostUiaProvider(IRawElementProviderSimple** provider) override;
 #pragma endregion
 
         RECT GetBoundingRectWrapped();
