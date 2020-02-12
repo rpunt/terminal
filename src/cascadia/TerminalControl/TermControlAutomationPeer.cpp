@@ -196,7 +196,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 
     double TermControlAutomationPeer::GetScaleFactor()
     {
-        DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel();
+        return DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel();
     }
 
     void TermControlAutomationPeer::ChangeViewport(const SMALL_RECT NewWindow)
