@@ -178,7 +178,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         };
     }
 
-    HRESULT TermControlAutomationPeer::GetHostUiaProvider(IRawElementProviderSimple** provider)
+    HRESULT TermControlAutomationPeer::GetHostUiaProvider(IRawElementProviderSimple** /* provider */)
     {
         return S_OK;
     }
@@ -186,13 +186,12 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
     RECT TermControlAutomationPeer::GetPadding()
     {
         auto padding = _termControl->GetPadding();
-        return
-        {
+        return {
             gsl::narrow<LONG>(padding.Left),
-                gsl::narrow<LONG>(padding.Top),
-                gsl::narrow<LONG>(padding.Right),
-                gsl::narrow<LONG>(padding.Bottom)
-        }
+            gsl::narrow<LONG>(padding.Top),
+            gsl::narrow<LONG>(padding.Right),
+            gsl::narrow<LONG>(padding.Bottom)
+        };
     }
 
     double TermControlAutomationPeer::GetScaleFactor()
@@ -200,7 +199,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel();
     }
 
-    void ChangeViewport(const SMALL_RECT NewWindow)
+    void TermControlAutomationPeer::ChangeViewport(const SMALL_RECT NewWindow)
     {
         _termControl->ScrollViewport(NewWindow.Top);
     }
@@ -215,7 +214,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
     winrt::com_array<XamlAutomation::ITextRangeProvider> TermControlAutomationPeer::WrapArrayOfTextRangeProviders(SAFEARRAY* textRanges)
     {
         // transfer ownership of UiaTextRanges to this new vector
-        auto providers = SafeArrayToOwningVector<::Microsoft::Terminal::UiaTextRange>(textRanges);
+        auto providers = SafeArrayToOwningVector<::Microsoft::Terminal::TermControlUiaTextRange>(textRanges);
         int count = gsl::narrow<int>(providers.size());
 
         std::vector<XamlAutomation::ITextRangeProvider> vec;
