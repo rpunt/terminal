@@ -49,8 +49,8 @@
     <ClInclude Include="..\IUiaData.h" />
     <ClInclude Include="..\IUiaEventDispatcher.h" />
     <ClInclude Include="..\IUiaWindow.h" />
-    <ClCompile Include="..\TermControlUiaTextRange.hpp" />
-    <ClCompile Include="..\TermControlUiaProvider.hpp" />
+    <ClInclude Include="..\TermControlUiaTextRange.hpp" />
+    <ClInclude Include="..\TermControlUiaProvider.hpp" />
     <ClInclude Include="..\precomp.h" />
     <ClInclude Include="..\ScreenInfoUiaProviderBase.h" />
     <ClInclude Include="..\UiaTextRangeBase.hpp" />
