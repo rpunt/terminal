@@ -66,7 +66,11 @@ IFACEMETHODIMP TermControlUiaProvider::get_BoundingRectangle(_Out_ UiaRect* pRec
 
 IFACEMETHODIMP TermControlUiaProvider::get_HostRawElementProvider(_COM_Outptr_result_maybenull_ IRawElementProviderSimple** ppProvider) noexcept
 {
-    return _controlInfo->GetHostUiaProvider(ppProvider);
+    try
+    {
+        return _controlInfo->GetHostUiaProvider(ppProvider);
+    }
+    CATCH_RETURN();
 }
 
 IFACEMETHODIMP TermControlUiaProvider::get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider)

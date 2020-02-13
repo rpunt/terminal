@@ -61,6 +61,7 @@ private:
     FontInfoDesired _desiredFont;
     FontInfo _actualFont;
     int _currentDpi;
+    bool _uiaProviderInitialized;
 
     ::Microsoft::WRL::ComPtr<::Microsoft::Terminal::TermControlUiaProvider> _uiaProvider;
 
@@ -84,7 +85,7 @@ private:
     friend void _stdcall TerminalBlinkCursor(void* terminal);
     friend void _stdcall TerminalSetCursorVisible(void* terminal, const bool visible);
     void _UpdateFont(int newDpi);
-    IRawElementProviderSimple* _GetUiaProvider();
+    IRawElementProviderSimple* _GetUiaProvider() noexcept;
 
     // Inherited via IControlInfo
     virtual COORD GetFontSize() override;

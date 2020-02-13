@@ -30,7 +30,6 @@ LRESULT CALLBACK HwndTerminal::HwndTerminalWndProc(
         case WM_GETOBJECT:
             if (static_cast<long>(lParam) == static_cast<long>(UiaRootObjectId))
             {
-                auto lock = terminal->_terminal->LockForWriting();
                 return UiaReturnRawElementProvider(hwnd, wParam, lParam, terminal->_GetUiaProvider());
             }
         }
@@ -63,7 +62,8 @@ static bool RegisterTermClass(HINSTANCE hInstance) noexcept
 HwndTerminal::HwndTerminal(HWND parentHwnd) :
     _desiredFont{ DEFAULT_FONT_FACE, 0, 10, { 0, 14 }, CP_UTF8 },
     _actualFont{ DEFAULT_FONT_FACE, 0, 10, { 0, 14 }, CP_UTF8, false },
-    _uiaProvider{ nullptr }
+    _uiaProvider{ nullptr },
+    _uiaProviderInitialized{ false }
 {
     HINSTANCE hInstance = wil::GetModuleInstanceHandle();
 
@@ -179,12 +179,19 @@ void HwndTerminal::_UpdateFont(int newDpi)
     _renderer->TriggerFontChange(newDpi, _desiredFont, _actualFont);
 }
 
-IRawElementProviderSimple* HwndTerminal::_GetUiaProvider()
+IRawElementProviderSimple* HwndTerminal::_GetUiaProvider() noexcept
 {
-    if (nullptr == _uiaProvider)
+    if (nullptr == _uiaProvider && !_uiaProviderInitialized)
     {
+        std::unique_lock<std::shared_mutex> lock;
         try
         {
+            lock = _terminal->LockForWriting();
+            if (_uiaProviderInitialized)
+            {
+                return _uiaProvider.Get();
+            }
+
             LOG_IF_FAILED(::Microsoft::WRL::MakeAndInitialize<::Microsoft::Terminal::TermControlUiaProvider>(&_uiaProvider, this->GetUiaData(), this));
         }
         catch (...)
@@ -192,6 +199,7 @@ IRawElementProviderSimple* HwndTerminal::_GetUiaProvider()
             LOG_HR(wil::ResultFromCaughtException());
             _uiaProvider = nullptr;
         }
+        _uiaProviderInitialized = true;
     }
 
     return _uiaProvider.Get();
@@ -249,7 +257,7 @@ HRESULT _stdcall CreateTerminal(HWND parentHwnd, _Out_ void** hwnd, _Out_ void**
         0,
         0,
         parentHwnd,
-        (HMENU)0x02,
+        nullptr,
         nullptr,
         0);
     auto _terminal = std::make_unique<HwndTerminal>(_hostWindow);

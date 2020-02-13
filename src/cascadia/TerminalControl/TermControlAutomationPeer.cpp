@@ -178,8 +178,11 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         };
     }
 
-    HRESULT TermControlAutomationPeer::GetHostUiaProvider(IRawElementProviderSimple** /* provider */)
+    HRESULT TermControlAutomationPeer::GetHostUiaProvider(IRawElementProviderSimple** provider)
     {
+        RETURN_HR_IF(E_INVALIDARG, provider == nullptr);
+        *provider = nullptr;
+
         return S_OK;
     }
 
