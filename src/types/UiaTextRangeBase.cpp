@@ -544,98 +544,40 @@ CATCH_RETURN();
 IFACEMETHODIMP UiaTextRangeBase::GetText(_In_ int maxLength, _Out_ BSTR* pRetVal) noexcept
 try
 {
-    _pData->LockConsole();
-    auto Unlock = wil::scope_exit([&]() noexcept {
-        _pData->UnlockConsole();
-    });
-
     RETURN_HR_IF(E_INVALIDARG, pRetVal == nullptr);
     *pRetVal = nullptr;
-
-    std::wstring wstr = L"";
 
     if (maxLength < -1)
     {
         return E_INVALIDARG;
     }
-    // the caller must pass in a value for the max length of the text
-    // to retrieve. a value of -1 means they don't want the text
-    // truncated.
-    const bool getPartialText = maxLength != -1;
 
+    _pData->LockConsole();
+    auto Unlock = wil::scope_exit([&]() noexcept {
+        _pData->UnlockConsole();
+    });
+
+    std::wstring textData{};
     if (!IsDegenerate())
     {
-#if defined(_DEBUG) && defined(UIATEXTRANGE_DEBUG_MSGS)
-        std::wstringstream ss;
-        ss << L"---Initial span start={" << _start.X << L", " << _start.Y << L"} and end={" << _end.X << ", " << _end.Y << L"}\n";
-        OutputDebugString(ss.str().c_str());
-#endif
-
-        // if _end is at 0, we ignore that row because _end is exclusive
         const auto& buffer = _pData->GetTextBuffer();
-        const short totalRowsInRange = (_end.X == buffer.GetSize().Left()) ?
-                                           base::ClampSub(_end.Y, _start.Y) :
-                                           base::ClampAdd(base::ClampSub(_end.Y, _start.Y), base::ClampedNumeric<short>(1));
-        const short lastRowInRange = _start.Y + totalRowsInRange - 1;
+        const auto bufferSize = buffer.GetSize();
 
-        short currentScreenInfoRow = 0;
-        for (short i = 0; i < totalRowsInRange; ++i)
+        // convert _end to be inclusive
+        auto inclusiveEnd{ _end };
+        bufferSize.DecrementInBounds(inclusiveEnd, true);
+
+        const auto textRects = buffer.GetTextRects(_start, inclusiveEnd);
+        const auto bufferData = buffer.GetText(/*includeCRLF*/ true,
+                                               /*trimTrailingWhitespace*/ false,
+                                               textRects);
+
+        for (const auto& text : bufferData.text)
         {
-            currentScreenInfoRow = _start.Y + i;
-            const ROW& row = buffer.GetRowByOffset(currentScreenInfoRow);
-            if (row.GetCharRow().ContainsText())
-            {
-                const size_t rowRight = row.GetCharRow().MeasureRight();
-                size_t startIndex = 0;
-                size_t endIndex = rowRight;
-                if (currentScreenInfoRow == _start.Y)
-                {
-                    startIndex = _start.X;
-                }
-
-                if (currentScreenInfoRow == _end.Y)
-                {
-                    // prevent the end from going past the last non-whitespace char in the row
-                    endIndex = std::max<size_t>(startIndex + 1, std::min(gsl::narrow_cast<size_t>(_end.X), rowRight));
-                }
-
-                // if startIndex >= endIndex then _start is
-                // further to the right than the last
-                // non-whitespace char in the row so there
-                // wouldn't be any text to grab.
-                if (startIndex < endIndex)
-                {
-                    wstr += row.GetText().substr(startIndex, endIndex - startIndex);
-                }
-            }
-
-            if (currentScreenInfoRow != lastRowInRange)
-            {
-                wstr += L"\r\n";
-            }
-
-            if (getPartialText && wstr.size() > static_cast<size_t>(maxLength))
-            {
-                wstr.resize(maxLength);
-                break;
-            }
+            textData += text;
         }
     }
-
-    *pRetVal = SysAllocString(wstr.c_str());
-
-    // TODO GitHub #1914: Re-attach Tracing to UIA Tree
-    // tracing
-    /*ApiMsgGetText apiMsg;
-    apiMsg.Text = wstr.c_str();
-    Tracing::s_TraceUia(this, ApiCall::GetText, &apiMsg);*/
-
-#if defined(_DEBUG) && defined(UIATEXTRANGE_DEBUG_MSGS)
-    std::wstringstream ss;
-    ss << L"--------Retrieved Text Max Length(" << maxLength << L") [" << _id << L"]: " << wstr.c_str() << "\n";
-    OutputDebugString(ss.str().c_str());
-#endif
-
+    *pRetVal = SysAllocString(textData.c_str());
     return S_OK;
 }
 CATCH_RETURN();
