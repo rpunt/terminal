@@ -187,10 +187,10 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
     {
         auto padding = _termControl->GetPadding();
         return {
-            gsl::narrow<LONG>(padding.Left),
-            gsl::narrow<LONG>(padding.Top),
-            gsl::narrow<LONG>(padding.Right),
-            gsl::narrow<LONG>(padding.Bottom)
+            gsl::narrow_cast<LONG>(padding.Left),
+            gsl::narrow_cast<LONG>(padding.Top),
+            gsl::narrow_cast<LONG>(padding.Right),
+            gsl::narrow_cast<LONG>(padding.Bottom)
         };
     }
 

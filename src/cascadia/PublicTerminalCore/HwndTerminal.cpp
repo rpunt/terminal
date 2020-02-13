@@ -10,7 +10,6 @@
 #include "../../cascadia/TerminalCore/Terminal.hpp"
 #include "../../types/viewport.cpp"
 #include "../../types/inc/GlyphWidth.hpp"
-#include <assert.h>
 
 using namespace ::Microsoft::Terminal::Core;
 
@@ -186,7 +185,7 @@ IRawElementProviderSimple* HwndTerminal::_GetUiaProvider()
     {
         try
         {
-            THROW_IF_FAILED(::Microsoft::WRL::MakeAndInitialize<::Microsoft::Terminal::TermControlUiaProvider>(&_uiaProvider, this->GetUiaData(), this));
+            LOG_IF_FAILED(::Microsoft::WRL::MakeAndInitialize<::Microsoft::Terminal::TermControlUiaProvider>(&_uiaProvider, this->GetUiaData(), this));
         }
         catch (...)
         {
@@ -234,6 +233,9 @@ void HwndTerminal::SendOutput(std::wstring_view data)
 
 HRESULT _stdcall CreateTerminal(HWND parentHwnd, _Out_ void** hwnd, _Out_ void** terminal)
 {
+    // In order for UIA to hook up properly there needs to be a "static" window hosting the
+    // inner win32 control. If the static window is not present then WM_GETOBJECT messages
+    // will not reach the child control, and the uia element will not be present in the tree.
     auto _hostWindow = CreateWindowEx(
         0,
         L"static",
@@ -281,14 +283,14 @@ HRESULT _stdcall TerminalTriggerResize(void* terminal, double width, double heig
 {
     const auto publicTerminal = static_cast<HwndTerminal*>(terminal);
 
-    SetWindowPos(
+    LOG_IF_WIN32_BOOL_FALSE(SetWindowPos(
         publicTerminal->GetHwnd(),
         nullptr,
         0,
         0,
         static_cast<int>(width),
         static_cast<int>(height),
-        0);
+        0));
 
     const SIZE windowSize{ static_cast<short>(width), static_cast<short>(height) };
     return publicTerminal->Refresh(windowSize, dimensions);
@@ -501,12 +503,7 @@ RECT HwndTerminal::GetBounds()
 
 RECT HwndTerminal::GetPadding()
 {
-    return {
-        0,
-        0,
-        0,
-        0,
-    };
+    return { 0 };
 }
 
 double HwndTerminal::GetScaleFactor()
@@ -514,8 +511,9 @@ double HwndTerminal::GetScaleFactor()
     return static_cast<double>(_currentDpi) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
 
-void HwndTerminal::ChangeViewport(const SMALL_RECT /* NewWindow */)
+void HwndTerminal::ChangeViewport(const SMALL_RECT NewWindow)
 {
+    _terminal->UserScrollViewport(NewWindow.Top);
 }
 
 HRESULT HwndTerminal::GetHostUiaProvider(IRawElementProviderSimple** provider)
