@@ -41,7 +41,7 @@ HRESULT UiaTextRange::GetSelectionRanges(_In_ IUiaData* pData,
 }
 
 // degenerate range constructor.
-HRESULT UiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _In_ IRawElementProviderSimple* const pProvider, _In_ const std::wstring_view wordDelimiters)
+HRESULT UiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _In_ IRawElementProviderSimple* const pProvider, _In_ const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, wordDelimiters);
 }
@@ -50,7 +50,7 @@ HRESULT UiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _In_ IRawElem
 HRESULT UiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                              _In_ IRawElementProviderSimple* const pProvider,
                                              const Cursor& cursor,
-                                             const std::wstring_view wordDelimiters)
+                                             const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, cursor, wordDelimiters);
 }
@@ -60,7 +60,7 @@ HRESULT UiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                              _In_ IRawElementProviderSimple* const pProvider,
                                              const COORD start,
                                              const COORD end,
-                                             const std::wstring_view wordDelimiters)
+                                             const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, start, end, wordDelimiters);
 }

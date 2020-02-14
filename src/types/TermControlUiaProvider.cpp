@@ -9,7 +9,7 @@ using namespace Microsoft::Console::Types;
 using namespace Microsoft::WRL;
 
 HRESULT TermControlUiaProvider::RuntimeClassInitialize(_In_ ::Microsoft::Console::Types::IUiaData* const uiaData,
-                                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo)
+                                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo) noexcept
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, uiaData);
     RETURN_IF_FAILED(ScreenInfoUiaProviderBase::RuntimeClassInitialize(uiaData));
@@ -22,8 +22,10 @@ HRESULT TermControlUiaProvider::RuntimeClassInitialize(_In_ ::Microsoft::Console
 }
 
 IFACEMETHODIMP TermControlUiaProvider::Navigate(_In_ NavigateDirection direction,
-                                                _COM_Outptr_result_maybenull_ IRawElementProviderFragment** ppProvider)
+                                                _COM_Outptr_result_maybenull_ IRawElementProviderFragment** ppProvider) noexcept
 {
+    RETURN_HR_IF_NULL(E_INVALIDARG, ppProvider);
+
     // TODO GitHub #1914: Re-attach Tracing to UIA Tree
     /*ApiMsgNavigate apiMsg;
     apiMsg.Direction = direction;
@@ -54,12 +56,12 @@ IFACEMETHODIMP TermControlUiaProvider::get_BoundingRectangle(_Out_ UiaRect* pRec
     // TODO GitHub #1914: Re-attach Tracing to UIA Tree
     //Tracing::s_TraceUia(this, ApiCall::GetBoundingRectangle, nullptr);
 
-    RECT rc = _controlInfo->GetBounds();
+    const RECT rc = _controlInfo->GetBounds();
 
     pRect->left = rc.left;
     pRect->top = rc.top;
-    pRect->width = rc.right - rc.left;
-    pRect->height = rc.bottom - rc.top;
+    pRect->width = static_cast<double>(rc.right) - static_cast<double>(rc.left);
+    pRect->height = static_cast<double>(rc.bottom) - static_cast<double>(rc.top);
 
     return S_OK;
 }
@@ -73,8 +75,10 @@ IFACEMETHODIMP TermControlUiaProvider::get_HostRawElementProvider(_COM_Outptr_re
     CATCH_RETURN();
 }
 
-IFACEMETHODIMP TermControlUiaProvider::get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider)
+IFACEMETHODIMP TermControlUiaProvider::get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider) noexcept
 {
+    RETURN_HR_IF_NULL(E_INVALIDARG, ppProvider);
+
     // TODO GitHub #1914: Re-attach Tracing to UIA Tree
     //Tracing::s_TraceUia(this, ApiCall::GetFragmentRoot, nullptr);
     try

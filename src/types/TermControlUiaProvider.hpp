@@ -30,14 +30,14 @@ namespace Microsoft::Terminal
     public:
         TermControlUiaProvider() = default;
         HRESULT RuntimeClassInitialize(_In_ ::Microsoft::Console::Types::IUiaData* const uiaData,
-                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo);
+                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo) noexcept;
 
         // IRawElementProviderFragment methods
         IFACEMETHODIMP Navigate(_In_ NavigateDirection direction,
-                                _COM_Outptr_result_maybenull_ IRawElementProviderFragment** ppProvider) override;
+                                _COM_Outptr_result_maybenull_ IRawElementProviderFragment** ppProvider) noexcept override;
         IFACEMETHODIMP get_HostRawElementProvider(IRawElementProviderSimple** ppProvider) noexcept override;
         IFACEMETHODIMP get_BoundingRectangle(_Out_ UiaRect* pRect) override;
-        IFACEMETHODIMP get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider) override;
+        IFACEMETHODIMP get_FragmentRoot(_COM_Outptr_result_maybenull_ IRawElementProviderFragmentRoot** ppProvider) noexcept override;
 
         const COORD GetFontSize() const;
         const RECT GetPadding() const;

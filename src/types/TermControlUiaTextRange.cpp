@@ -16,6 +16,8 @@ HRESULT TermControlUiaTextRange::GetSelectionRanges(_In_ IUiaData* pData,
 {
     try
     {
+        RETURN_HR_IF_NULL(E_INVALIDARG, pData);
+
         typename std::remove_reference<decltype(ranges)>::type temporaryResult;
 
         // get the selection rects
@@ -38,7 +40,7 @@ HRESULT TermControlUiaTextRange::GetSelectionRanges(_In_ IUiaData* pData,
 }
 
 // degenerate range constructor.
-HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _In_ IRawElementProviderSimple* const pProvider, _In_ const std::wstring_view wordDelimiters)
+HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _In_ IRawElementProviderSimple* const pProvider, _In_ const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, wordDelimiters);
 }
@@ -46,7 +48,7 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData, _I
 HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                                         _In_ IRawElementProviderSimple* const pProvider,
                                                         const Cursor& cursor,
-                                                        const std::wstring_view wordDelimiters)
+                                                        const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, cursor, wordDelimiters);
 }
@@ -55,7 +57,7 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                                         _In_ IRawElementProviderSimple* const pProvider,
                                                         const COORD start,
                                                         const COORD end,
-                                                        const std::wstring_view wordDelimiters)
+                                                        const std::wstring_view wordDelimiters) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, start, end, wordDelimiters);
 }
@@ -64,14 +66,14 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
 HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                                         _In_ IRawElementProviderSimple* const pProvider,
                                                         const UiaPoint point,
-                                                        const std::wstring_view wordDelimiters)
+                                                        const std::wstring_view wordDelimiters) noexcept
 {
     RETURN_IF_FAILED(UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, wordDelimiters));
     Initialize(point);
     return S_OK;
 }
 
-HRESULT TermControlUiaTextRange::RuntimeClassInitialize(const TermControlUiaTextRange& a)
+HRESULT TermControlUiaTextRange::RuntimeClassInitialize(const TermControlUiaTextRange& a) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(a);
 }
@@ -80,7 +82,7 @@ IFACEMETHODIMP TermControlUiaTextRange::Clone(_Outptr_result_maybenull_ ITextRan
 {
     RETURN_HR_IF(E_INVALIDARG, ppRetVal == nullptr);
     *ppRetVal = nullptr;
-    auto hr = MakeAndInitialize<TermControlUiaTextRange>(ppRetVal, *this);
+    const auto hr = MakeAndInitialize<TermControlUiaTextRange>(ppRetVal, *this);
 
     if (hr != S_OK)
     {
@@ -122,7 +124,7 @@ void TermControlUiaTextRange::_TranslatePointToScreen(LPPOINT clientPoint) const
 {
     auto provider = static_cast<TermControlUiaProvider*>(_pProvider);
 
-    auto includeOffsets = [](long clientPos, double termControlPos, double padding, double scaleFactor) {
+    const auto includeOffsets = [](long clientPos, double termControlPos, double padding, double scaleFactor) {
         auto result = base::ClampedNumeric<double>(clientPos);
         result += padding;
         result *= scaleFactor;
@@ -153,7 +155,7 @@ void TermControlUiaTextRange::_TranslatePointToScreen(LPPOINT clientPoint) const
 // - <none>
 void TermControlUiaTextRange::_TranslatePointFromScreen(LPPOINT screenPoint) const
 {
-    auto provider = static_cast<TermControlUiaProvider*>(_pProvider);
+    gsl::not_null<TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
 
     auto includeOffsets = [](long screenPos, double termControlPos, double padding, double scaleFactor) {
         auto result = base::ClampedNumeric<double>(screenPos);

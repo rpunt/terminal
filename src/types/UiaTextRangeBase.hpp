@@ -61,18 +61,18 @@ namespace Microsoft::Console::Types
         static constexpr std::wstring_view DefaultWordDelimiter{ &UNICODE_SPACE, 1 };
 
         // degenerate range
-        HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
+        virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
         // degenerate range at cursor position
-        HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
+        virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        _In_ const Cursor& cursor,
                                        _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
         // specific endpoint range
-        HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
+        virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        _In_ const COORD start,
                                        _In_ const COORD end,

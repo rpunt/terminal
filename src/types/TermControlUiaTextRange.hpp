@@ -33,28 +33,28 @@ namespace Microsoft::Terminal
         // degenerate range
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
-                                       _In_ const std::wstring_view wordDelimiters = DefaultWordDelimiter);
+                                       _In_ const std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept override;
 
         // degenerate range at cursor position
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        const Cursor& cursor,
-                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter);
+                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept override;
 
         // specific endpoint range
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        const COORD start,
                                        const COORD end,
-                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter);
+                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept override;
 
         // range from a UiaPoint
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        const UiaPoint point,
-                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter);
+                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
-        HRESULT RuntimeClassInitialize(const TermControlUiaTextRange& a);
+        HRESULT RuntimeClassInitialize(const TermControlUiaTextRange& a) noexcept;
 
         IFACEMETHODIMP Clone(_Outptr_result_maybenull_ ITextRangeProvider** ppRetVal) override;
 
