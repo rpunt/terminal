@@ -63,6 +63,7 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
 }
 
 // returns a degenerate text range of the start of the row closest to the y value of point
+#pragma warning(suppress : 26434) // WRL RuntimeClassInitialize base is a no-op and we need this for MakeAndInitialize
 HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                                         _In_ IRawElementProviderSimple* const pProvider,
                                                         const UiaPoint point,
@@ -73,6 +74,7 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
     return S_OK;
 }
 
+#pragma warning(suppress : 26434) // WRL RuntimeClassInitialize base is a no-op and we need this for MakeAndInitialize
 HRESULT TermControlUiaTextRange::RuntimeClassInitialize(const TermControlUiaTextRange& a) noexcept
 {
     return UiaTextRangeBase::RuntimeClassInitialize(a);
