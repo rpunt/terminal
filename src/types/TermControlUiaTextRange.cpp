@@ -66,7 +66,7 @@ HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
 HRESULT TermControlUiaTextRange::RuntimeClassInitialize(_In_ IUiaData* pData,
                                                         _In_ IRawElementProviderSimple* const pProvider,
                                                         const UiaPoint point,
-                                                        const std::wstring_view wordDelimiters) noexcept
+                                                        const std::wstring_view wordDelimiters)
 {
     RETURN_IF_FAILED(UiaTextRangeBase::RuntimeClassInitialize(pData, pProvider, wordDelimiters));
     Initialize(point);
@@ -109,7 +109,7 @@ IFACEMETHODIMP TermControlUiaTextRange::Clone(_Outptr_result_maybenull_ ITextRan
 
 void TermControlUiaTextRange::_ChangeViewport(const SMALL_RECT NewWindow)
 {
-    auto provider = static_cast<TermControlUiaProvider*>(_pProvider);
+    const gsl::not_null<TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
     provider->ChangeViewport(NewWindow);
 }
 
@@ -122,7 +122,7 @@ void TermControlUiaTextRange::_ChangeViewport(const SMALL_RECT NewWindow)
 // - <none>
 void TermControlUiaTextRange::_TranslatePointToScreen(LPPOINT clientPoint) const
 {
-    auto provider = static_cast<TermControlUiaProvider*>(_pProvider);
+    const gsl::not_null<TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
 
     const auto includeOffsets = [](long clientPos, double termControlPos, double padding, double scaleFactor) {
         auto result = base::ClampedNumeric<double>(clientPos);
@@ -155,9 +155,9 @@ void TermControlUiaTextRange::_TranslatePointToScreen(LPPOINT clientPoint) const
 // - <none>
 void TermControlUiaTextRange::_TranslatePointFromScreen(LPPOINT screenPoint) const
 {
-    gsl::not_null<TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
+    const gsl::not_null<TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
 
-    auto includeOffsets = [](long screenPos, double termControlPos, double padding, double scaleFactor) {
+    const auto includeOffsets = [](long screenPos, double termControlPos, double padding, double scaleFactor) {
         auto result = base::ClampedNumeric<double>(screenPos);
         result -= termControlPos;
         result /= scaleFactor;
@@ -184,6 +184,6 @@ const COORD TermControlUiaTextRange::_getScreenFontSize() const
     // Do NOT get the font info from IRenderData. It is a dummy font info.
     // Instead, the font info is saved in the TermControl. So we have to
     // ask our parent to get it for us.
-    auto provider = static_cast<TermControlUiaProvider*>(_pProvider);
+    const gsl::not_null<const TermControlUiaProvider*> provider = static_cast<TermControlUiaProvider*>(_pProvider);
     return provider->GetFontSize();
 }

@@ -52,7 +52,7 @@ namespace Microsoft::Terminal
         HRESULT RuntimeClassInitialize(_In_ Microsoft::Console::Types::IUiaData* pData,
                                        _In_ IRawElementProviderSimple* const pProvider,
                                        const UiaPoint point,
-                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
+                                       const std::wstring_view wordDelimiters = DefaultWordDelimiter);
 
         HRESULT RuntimeClassInitialize(const TermControlUiaTextRange& a) noexcept;
 

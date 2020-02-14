@@ -78,7 +78,7 @@ namespace Microsoft::Console::Types
                                                _In_ const COORD end,
                                                _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
-        HRESULT RuntimeClassInitialize(const UiaTextRangeBase& a) noexcept;
+        virtual HRESULT RuntimeClassInitialize(const UiaTextRangeBase& a) noexcept;
 
         UiaTextRangeBase(UiaTextRangeBase&&) = default;
         UiaTextRangeBase& operator=(const UiaTextRangeBase&) = default;
