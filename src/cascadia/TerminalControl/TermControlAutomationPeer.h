@@ -29,14 +29,14 @@ Author(s):
 #include <winrt/Microsoft.Terminal.TerminalControl.h>
 #include "../types/TermControlUiaProvider.hpp"
 #include "../types/IUiaEventDispatcher.h"
-#include "../types/IControlInfo.h"
+#include "../types/IControlAccessibilityInfo.h"
 
 namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 {
     struct TermControlAutomationPeer :
         public TermControlAutomationPeerT<TermControlAutomationPeer>,
         ::Microsoft::Console::Types::IUiaEventDispatcher,
-        ::Microsoft::Console::Types::IControlInfo
+        ::Microsoft::Console::Types::IControlAccessibilityInfo
     {
     public:
         TermControlAutomationPeer(winrt::Microsoft::Terminal::TerminalControl::implementation::TermControl* owner);
@@ -61,8 +61,8 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         Windows::UI::Xaml::Automation::Provider::ITextRangeProvider DocumentRange();
 #pragma endregion
 
-#pragma region IControlInfo Pattern
-        // Inherited via IControlInfo
+#pragma region IControlAccessibilityInfo Pattern
+        // Inherited via IControlAccessibilityInfo
         virtual COORD GetFontSize() override;
         virtual RECT GetBounds() override;
         virtual RECT GetPadding() override;

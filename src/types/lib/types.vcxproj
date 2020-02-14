@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClInclude Include="..\IBaseData.h" />
     <ClInclude Include="..\IConsoleWindow.hpp" />
+    <ClInclude Include="..\IControlAccessibilityInfo.h" />
     <ClInclude Include="..\inc\CodepointWidthDetector.hpp" />
     <ClInclude Include="..\inc\convert.hpp" />
     <ClInclude Include="..\inc\Environment.hpp" />

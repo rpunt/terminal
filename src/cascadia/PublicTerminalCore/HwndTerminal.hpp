@@ -7,7 +7,7 @@
 #include "../../renderer/dx/DxRenderer.hpp"
 #include "../../cascadia/TerminalCore/Terminal.hpp"
 #include <UIAutomationCore.h>
-#include "../../types/IControlInfo.h"
+#include "../../types/IControlAccessibilityInfo.h"
 #include "../../types/TermControlUiaProvider.hpp"
 
 using namespace Microsoft::Console::VirtualTerminal;
@@ -42,7 +42,7 @@ __declspec(dllexport) void _stdcall TerminalBlinkCursor(void* terminal);
 __declspec(dllexport) void _stdcall TerminalSetCursorVisible(void* terminal, const bool visible);
 };
 
-struct HwndTerminal : ::Microsoft::Console::Types::IControlInfo
+struct HwndTerminal : ::Microsoft::Console::Types::IControlAccessibilityInfo
 {
 public:
     HwndTerminal(HWND hwnd);
@@ -87,7 +87,7 @@ private:
     void _UpdateFont(int newDpi);
     IRawElementProviderSimple* _GetUiaProvider() noexcept;
 
-    // Inherited via IControlInfo
+    // Inherited via IControlAccessibilityInfo
     virtual COORD GetFontSize() override;
     virtual RECT GetBounds() override;
     virtual double GetScaleFactor() override;

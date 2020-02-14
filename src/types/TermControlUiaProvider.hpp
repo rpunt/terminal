@@ -21,7 +21,7 @@ Author(s):
 
 #include "ScreenInfoUiaProviderBase.h"
 #include "UiaTextRangeBase.hpp"
-#include "IControlInfo.h"
+#include "IControlAccessibilityInfo.h"
 #include "TermControlUiaTextRange.hpp"
 namespace Microsoft::Terminal
 {
@@ -30,7 +30,7 @@ namespace Microsoft::Terminal
     public:
         TermControlUiaProvider() = default;
         HRESULT RuntimeClassInitialize(_In_ ::Microsoft::Console::Types::IUiaData* const uiaData,
-                                       _In_ ::Microsoft::Console::Types::IControlInfo* controlInfo);
+                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo);
 
         // IRawElementProviderFragment methods
         IFACEMETHODIMP Navigate(_In_ NavigateDirection direction,
@@ -70,6 +70,6 @@ namespace Microsoft::Terminal
                                 _COM_Outptr_result_maybenull_ Microsoft::Console::Types::UiaTextRangeBase** ppUtr) override;
 
     private:
-        ::Microsoft::Console::Types::IControlInfo* _controlInfo;
+        ::Microsoft::Console::Types::IControlAccessibilityInfo* _controlInfo;
     };
 }

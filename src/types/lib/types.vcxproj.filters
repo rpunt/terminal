@@ -104,6 +104,9 @@
     <ClInclude Include="..\IConsoleWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\IControlAccessibilityInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\UiaTextRangeBase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

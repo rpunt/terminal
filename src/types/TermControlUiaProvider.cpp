@@ -9,7 +9,7 @@ using namespace Microsoft::Console::Types;
 using namespace Microsoft::WRL;
 
 HRESULT TermControlUiaProvider::RuntimeClassInitialize(_In_ ::Microsoft::Console::Types::IUiaData* const uiaData,
-                                                       _In_ ::Microsoft::Console::Types::IControlInfo* controlInfo)
+                                                       _In_ ::Microsoft::Console::Types::IControlAccessibilityInfo* controlInfo)
 {
     RETURN_HR_IF_NULL(E_INVALIDARG, uiaData);
     RETURN_IF_FAILED(ScreenInfoUiaProviderBase::RuntimeClassInitialize(uiaData));

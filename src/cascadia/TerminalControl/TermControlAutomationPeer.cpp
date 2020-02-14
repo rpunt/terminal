@@ -161,7 +161,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 
 #pragma endregion
 
-#pragma region IControlInfo
+#pragma region IControlAccessibilityInfo
     COORD TermControlAutomationPeer::GetFontSize()
     {
         return _termControl->GetActualFont().GetSize();
