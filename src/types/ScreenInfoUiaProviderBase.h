@@ -55,7 +55,7 @@ namespace Microsoft::Console::Types
                                           _COM_Outptr_result_maybenull_ IUnknown** ppInterface) override;
         IFACEMETHODIMP GetPropertyValue(_In_ PROPERTYID idProp,
                                         _Out_ VARIANT* pVariant) noexcept override;
-        virtual IFACEMETHODIMP get_HostRawElementProvider(_COM_Outptr_result_maybenull_ IRawElementProviderSimple** ppProvider) noexcept;
+        IFACEMETHODIMP get_HostRawElementProvider(_COM_Outptr_result_maybenull_ IRawElementProviderSimple** ppProvider) noexcept override;
 
         // IRawElementProviderFragment methods
         virtual IFACEMETHODIMP Navigate(_In_ NavigateDirection direction,

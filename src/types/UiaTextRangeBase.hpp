@@ -62,21 +62,21 @@ namespace Microsoft::Console::Types
 
         // degenerate range
         virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
-                                       _In_ IRawElementProviderSimple* const pProvider,
-                                       _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
+                                               _In_ IRawElementProviderSimple* const pProvider,
+                                               _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
         // degenerate range at cursor position
         virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
-                                       _In_ IRawElementProviderSimple* const pProvider,
-                                       _In_ const Cursor& cursor,
-                                       _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
+                                               _In_ IRawElementProviderSimple* const pProvider,
+                                               _In_ const Cursor& cursor,
+                                               _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
         // specific endpoint range
         virtual HRESULT RuntimeClassInitialize(_In_ IUiaData* pData,
-                                       _In_ IRawElementProviderSimple* const pProvider,
-                                       _In_ const COORD start,
-                                       _In_ const COORD end,
-                                       _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
+                                               _In_ IRawElementProviderSimple* const pProvider,
+                                               _In_ const COORD start,
+                                               _In_ const COORD end,
+                                               _In_ std::wstring_view wordDelimiters = DefaultWordDelimiter) noexcept;
 
         HRESULT RuntimeClassInitialize(const UiaTextRangeBase& a) noexcept;
 
