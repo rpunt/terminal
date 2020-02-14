@@ -162,12 +162,12 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
 #pragma endregion
 
 #pragma region IControlAccessibilityInfo
-    COORD TermControlAutomationPeer::GetFontSize()
+    COORD TermControlAutomationPeer::GetFontSize() const
     {
         return _termControl->GetActualFont().GetSize();
     }
 
-    RECT TermControlAutomationPeer::GetBounds()
+    RECT TermControlAutomationPeer::GetBounds() const
     {
         auto rect = GetBoundingRectangle();
         return {
@@ -186,7 +186,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         return S_OK;
     }
 
-    RECT TermControlAutomationPeer::GetPadding()
+    RECT TermControlAutomationPeer::GetPadding() const
     {
         auto padding = _termControl->GetPadding();
         return {
@@ -197,7 +197,7 @@ namespace winrt::Microsoft::Terminal::TerminalControl::implementation
         };
     }
 
-    double TermControlAutomationPeer::GetScaleFactor()
+    double TermControlAutomationPeer::GetScaleFactor() const
     {
         return DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel();
     }

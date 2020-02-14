@@ -497,24 +497,24 @@ void _stdcall TerminalSetCursorVisible(void* terminal, const bool visible)
     publicTerminal->_terminal->SetCursorVisible(visible);
 }
 
-COORD HwndTerminal::GetFontSize()
+COORD HwndTerminal::GetFontSize() const
 {
     return _actualFont.GetSize();
 }
 
-RECT HwndTerminal::GetBounds()
+RECT HwndTerminal::GetBounds() const
 {
     RECT windowRect;
     GetWindowRect(_hwnd.get(), &windowRect);
     return windowRect;
 }
 
-RECT HwndTerminal::GetPadding()
+RECT HwndTerminal::GetPadding() const
 {
     return { 0 };
 }
 
-double HwndTerminal::GetScaleFactor()
+double HwndTerminal::GetScaleFactor() const
 {
     return static_cast<double>(_currentDpi) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
